@@ -1,4 +1,10 @@
-﻿<ContentPage x:Class="Movil01.MainPage" Title="Calculadora">
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:Movil01"
+             x:Class="Movil01.MainPage"
+             x:DataType="local:MainPage"
+             Title="Calculadora">
 <Grid Padding="16" RowSpacing="12" RowDefinitions="*,Auto">
         <VerticalStackLayout Grid.Row="0" VerticalOptions="End" HorizontalOptions="End" Spacing="4">
             <Label Text="{Binding Expression}" FontSize="20" TextColor="Gray" HorizontalTextAlignment="End" />

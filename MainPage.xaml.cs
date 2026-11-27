@@ -1,21 +1,22 @@
-﻿namespace Movil01;
-
-using System.ComponentModel;
-using System.Globalization;
-using System.Runtime.CompilerServices;
+﻿using System.Globalization;
 using System.Windows.Input;
 
-public partial class MainPage : INotifyPropertyChanged //ContentPage
+namespace Movil01;
+
+// Ya no se redeclara INotifyPropertyChanged: ContentPage (BindableObject) lo trae
+// con su propio PropertyChanged y OnPropertyChanged.
+public partial class MainPage : ContentPage
 {
-	private string _display = "0";
+    private string _display = "0";
     private string _expression = "";
     private double? _accumulator;
     private string? _operator;
     private bool _resetOnNextDigit;
-	public MainPage()
-	{
-		InitializeComponent();
-        //BindingContext = this;
+
+    public MainPage()
+    {
+        InitializeComponent();
+        BindingContext = this;   // estaba comentado: sin esto ningún binding funciona
 
         DigitCommand = new Command<string>(OnDigit);
         OperatorCommand = new Command<string>(OnOperator);
@@ -24,13 +25,19 @@ public partial class MainPage : INotifyPropertyChanged //ContentPage
         DecimalCommand = new Command(OnDecimal);
         ToggleSignCommand = new Command(OnToggleSign);
         PercentCommand = new Command(OnPercent);
-        BackspaceCommand = new Command(OnBackspace);		
-	}
+        BackspaceCommand = new Command(OnBackspace);
+    }
 
     public string Display
     {
         get => _display;
-        private set { if (_display != value) { _display = value; OnPropertyChanged(); } }
+        private set
+        {
+            if (_display == value) return;
+            _display = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(DisplayFontSize));
+        }
     }
 
     public string Expression
@@ -38,6 +45,15 @@ public partial class MainPage : INotifyPropertyChanged //ContentPage
         get => _expression;
         private set { if (_expression != value) { _expression = value; OnPropertyChanged(); } }
     }
+
+    // En vez de truncar el número con "…", la fuente se achica según su longitud.
+    public double DisplayFontSize => Display.Length switch
+    {
+        <= 8 => 56,
+        <= 11 => 44,
+        <= 14 => 34,
+        _ => 28
+    };
 
     public ICommand DigitCommand { get; }
     public ICommand OperatorCommand { get; }
@@ -51,14 +67,18 @@ public partial class MainPage : INotifyPropertyChanged //ContentPage
     private double Current => double.Parse(Display, CultureInfo.InvariantCulture);
 
     private static string Format(double v)
-        => double.IsNaN(v) || double.IsInfinity(v) ? "Error" : v.ToString("G12", CultureInfo.InvariantCulture);
+    {
+        if (double.IsNaN(v) || double.IsInfinity(v)) return "Error";
+        if (v == 0) v = 0;   // evita que 0 × −5 se muestre como "-0"
+        return v.ToString("G12", CultureInfo.InvariantCulture);
+    }
 
     private void OnDigit(string? d)
     {
         if (d is null) return;
         if (Display == "Error") OnClear();
         if (_resetOnNextDigit || Display == "0") { Display = d; _resetOnNextDigit = false; }
-        else if (Display.Length < 15) Display += d;
+        else if (Display.Count(char.IsDigit) < 15) Display += d;   // cuenta dígitos, no el signo ni el punto
     }
 
     private void OnDecimal()
@@ -73,6 +93,14 @@ public partial class MainPage : INotifyPropertyChanged //ContentPage
         if (op is null || Display == "Error") return;
         if (_operator is not null && !_resetOnNextDigit) Compute();
         else _accumulator = Current;
+
+        if (Display == "Error")   // la operación anterior falló (por ejemplo, división entre 0)
+        {
+            Expression = "";
+            _operator = null;
+            return;
+        }
+
         _operator = op;
         Expression = $"{Format(_accumulator ?? 0)} {op}";
         _resetOnNextDigit = true;
@@ -133,9 +161,4 @@ public partial class MainPage : INotifyPropertyChanged //ContentPage
         var s = Display[..^1];
         Display = s is "" or "-" ? "0" : s;
     }
-
-    public new event PropertyChangedEventHandler? PropertyChanged;
-    private new void OnPropertyChanged([CallerMemberName] string? name = null)
-        => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-    
 }
