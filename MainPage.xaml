@@ -4,55 +4,79 @@
              xmlns:local="clr-namespace:Movil01"
              x:Class="Movil01.MainPage"
              x:DataType="local:MainPage"
-             Title="Calculadora">
-<Grid Padding="16" RowSpacing="12" RowDefinitions="*,Auto">
+             Title="Conversor de temperatura">
+
+    <ContentPage.Resources>
+        <Style x:Key="DigitKey" TargetType="Button">
+            <Setter Property="BackgroundColor" Value="#E8E8E6" />
+            <Setter Property="TextColor" Value="Black" />
+            <Setter Property="FontSize" Value="26" />
+            <Setter Property="CornerRadius" Value="12" />
+            <Setter Property="Padding" Value="0" />
+        </Style>
+        <Style x:Key="FunctionKey" TargetType="Button" BasedOn="{StaticResource DigitKey}">
+            <Setter Property="BackgroundColor" Value="#D4D4D2" />
+        </Style>
+        <Style x:Key="ConvertKey" TargetType="Button" BasedOn="{StaticResource DigitKey}">
+            <Setter Property="BackgroundColor" Value="#FF9500" />
+            <Setter Property="TextColor" Value="White" />
+            <Setter Property="FontSize" Value="17" />
+        </Style>
+    </ContentPage.Resources>
+
+    <Grid Padding="16" RowSpacing="12" RowDefinitions="*,2*">
         <VerticalStackLayout Grid.Row="0" VerticalOptions="End" HorizontalOptions="End" Spacing="4">
             <Label Text="{Binding Expression}" FontSize="20" TextColor="Gray" HorizontalTextAlignment="End" />
-            <Label Text="{Binding Display}" FontSize="56" HorizontalTextAlignment="End"
-                   LineBreakMode="TailTruncation" MaxLines="1" />
+            <Label Text="{Binding Display}" FontSize="{Binding DisplayFontSize}" HorizontalTextAlignment="End"
+                   LineBreakMode="NoWrap" MaxLines="1" />
         </VerticalStackLayout>
+
         <Grid Grid.Row="1" RowSpacing="8" ColumnSpacing="8"
-              RowDefinitions="72,72,72,72,72" ColumnDefinitions="*,*,*,*">
+              RowDefinitions="*,*,*,*,*" ColumnDefinitions="*,*,*,*">
             <Button Grid.Row="0" Grid.Column="0" Text="C" Command="{Binding ClearCommand}"
-                    BackgroundColor="#D4D4D2" TextColor="Black" FontSize="26" CornerRadius="12" />
+                    Style="{StaticResource FunctionKey}" SemanticProperties.Description="Borrar todo" />
             <Button Grid.Row="0" Grid.Column="1" Text="⌫" Command="{Binding BackspaceCommand}"
-                    BackgroundColor="#D4D4D2" TextColor="Black" FontSize="26" CornerRadius="12" />
-            <Button Grid.Row="0" Grid.Column="2" Text="%" Command="{Binding PercentCommand}"
-                    BackgroundColor="#D4D4D2" TextColor="Black" FontSize="26" CornerRadius="12" />
-            <Button Grid.Row="0" Grid.Column="3" Text="÷" Command="{Binding OperatorCommand}" CommandParameter="÷"
-                    BackgroundColor="#FF9500" TextColor="White" FontSize="26" CornerRadius="12" />
+                    Style="{StaticResource FunctionKey}" SemanticProperties.Description="Borrar último dígito" />
+            <Button Grid.Row="0" Grid.Column="2" Text="±" Command="{Binding ToggleSignCommand}"
+                    Style="{StaticResource FunctionKey}" SemanticProperties.Description="Cambiar signo" />
+            <Button Grid.Row="0" Grid.Column="3" Text="°C→°F" Command="{Binding ConvertCommand}" CommandParameter="CF"
+                    Style="{StaticResource ConvertKey}" SemanticProperties.Description="De Celsius a Fahrenheit" />
+
             <Button Grid.Row="1" Grid.Column="0" Text="7" Command="{Binding DigitCommand}" CommandParameter="7"
-                    BackgroundColor="#E8E8E6" TextColor="Black" FontSize="26" CornerRadius="12" />
+                    Style="{StaticResource DigitKey}" />
             <Button Grid.Row="1" Grid.Column="1" Text="8" Command="{Binding DigitCommand}" CommandParameter="8"
-                    BackgroundColor="#E8E8E6" TextColor="Black" FontSize="26" CornerRadius="12" />
+                    Style="{StaticResource DigitKey}" />
             <Button Grid.Row="1" Grid.Column="2" Text="9" Command="{Binding DigitCommand}" CommandParameter="9"
-                    BackgroundColor="#E8E8E6" TextColor="Black" FontSize="26" CornerRadius="12" />
-            <Button Grid.Row="1" Grid.Column="3" Text="×" Command="{Binding OperatorCommand}" CommandParameter="×"
-                    BackgroundColor="#FF9500" TextColor="White" FontSize="26" CornerRadius="12" />
+                    Style="{StaticResource DigitKey}" />
+            <Button Grid.Row="1" Grid.Column="3" Text="°F→°C" Command="{Binding ConvertCommand}" CommandParameter="FC"
+                    Style="{StaticResource ConvertKey}" SemanticProperties.Description="De Fahrenheit a Celsius" />
+
             <Button Grid.Row="2" Grid.Column="0" Text="4" Command="{Binding DigitCommand}" CommandParameter="4"
-                    BackgroundColor="#E8E8E6" TextColor="Black" FontSize="26" CornerRadius="12" />
+                    Style="{StaticResource DigitKey}" />
             <Button Grid.Row="2" Grid.Column="1" Text="5" Command="{Binding DigitCommand}" CommandParameter="5"
-                    BackgroundColor="#E8E8E6" TextColor="Black" FontSize="26" CornerRadius="12" />
+                    Style="{StaticResource DigitKey}" />
             <Button Grid.Row="2" Grid.Column="2" Text="6" Command="{Binding DigitCommand}" CommandParameter="6"
-                    BackgroundColor="#E8E8E6" TextColor="Black" FontSize="26" CornerRadius="12" />
-            <Button Grid.Row="2" Grid.Column="3" Text="−" Command="{Binding OperatorCommand}" CommandParameter="−"
-                    BackgroundColor="#FF9500" TextColor="White" FontSize="26" CornerRadius="12" />
+                    Style="{StaticResource DigitKey}" />
+            <Button Grid.Row="2" Grid.Column="3" Text="°C→K" Command="{Binding ConvertCommand}" CommandParameter="CK"
+                    Style="{StaticResource ConvertKey}" SemanticProperties.Description="De Celsius a Kelvin" />
+
             <Button Grid.Row="3" Grid.Column="0" Text="1" Command="{Binding DigitCommand}" CommandParameter="1"
-                    BackgroundColor="#E8E8E6" TextColor="Black" FontSize="26" CornerRadius="12" />
+                    Style="{StaticResource DigitKey}" />
             <Button Grid.Row="3" Grid.Column="1" Text="2" Command="{Binding DigitCommand}" CommandParameter="2"
-                    BackgroundColor="#E8E8E6" TextColor="Black" FontSize="26" CornerRadius="12" />
+                    Style="{StaticResource DigitKey}" />
             <Button Grid.Row="3" Grid.Column="2" Text="3" Command="{Binding DigitCommand}" CommandParameter="3"
-                    BackgroundColor="#E8E8E6" TextColor="Black" FontSize="26" CornerRadius="12" />
-            <Button Grid.Row="3" Grid.Column="3" Text="+" Command="{Binding OperatorCommand}" CommandParameter="+"
-                    BackgroundColor="#FF9500" TextColor="White" FontSize="26" CornerRadius="12" />
-            <Button Grid.Row="4" Grid.Column="0" Text="±" Command="{Binding ToggleSignCommand}"
-                    BackgroundColor="#D4D4D2" TextColor="Black" FontSize="26" CornerRadius="12" />
-            <Button Grid.Row="4" Grid.Column="1" Text="0" Command="{Binding DigitCommand}" CommandParameter="0"
-                    BackgroundColor="#E8E8E6" TextColor="Black" FontSize="26" CornerRadius="12" />
-            <Button Grid.Row="4" Grid.Column="2" Text="." Command="{Binding DecimalCommand}"
-                    BackgroundColor="#E8E8E6" TextColor="Black" FontSize="26" CornerRadius="12" />
-            <Button Grid.Row="4" Grid.Column="3" Text="=" Command="{Binding EqualsCommand}"
-                    BackgroundColor="#FF9500" TextColor="White" FontSize="26" CornerRadius="12" />
+                    Style="{StaticResource DigitKey}" />
+            <Button Grid.Row="3" Grid.Column="3" Text="K→°C" Command="{Binding ConvertCommand}" CommandParameter="KC"
+                    Style="{StaticResource ConvertKey}" SemanticProperties.Description="De Kelvin a Celsius" />
+
+            <Button Grid.Row="4" Grid.Column="0" Text="0" Command="{Binding DigitCommand}" CommandParameter="0"
+                    Style="{StaticResource DigitKey}" />
+            <Button Grid.Row="4" Grid.Column="1" Text="." Command="{Binding DecimalCommand}"
+                    Style="{StaticResource DigitKey}" SemanticProperties.Description="Punto decimal" />
+            <Button Grid.Row="4" Grid.Column="2" Text="°F→K" Command="{Binding ConvertCommand}" CommandParameter="FK"
+                    Style="{StaticResource ConvertKey}" SemanticProperties.Description="De Fahrenheit a Kelvin" />
+            <Button Grid.Row="4" Grid.Column="3" Text="K→°F" Command="{Binding ConvertCommand}" CommandParameter="KF"
+                    Style="{StaticResource ConvertKey}" SemanticProperties.Description="De Kelvin a Fahrenheit" />
         </Grid>
     </Grid>
 
